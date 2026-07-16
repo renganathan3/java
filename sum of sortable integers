@@ -1,0 +1,67 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class Solution {
+    public int sortableIntegers(int[] nums) {
+        int n = nums.length;
+        
+        int[] sortedNums = nums.clone();
+        Arrays.sort(sortedNums);
+        
+        List<Integer> divisors = new ArrayList<>();
+        for (int i = 1; i * i <= n; i++) {
+            if (n % i == 0) {
+                divisors.add(i);
+                if (i * i != n) {
+                    divisors.add(n / i);
+                }
+            }
+        }
+        
+        int totalSum = 0;
+        
+        for (int k : divisors) {
+            boolean isValidK = true;
+            
+            for (int i = 0; i < n; i += k) {
+                int[] sub = new int[k];
+                System.arraycopy(nums, i, sub, 0, k);
+                
+                int[] sortedSub = sub.clone();
+                Arrays.sort(sortedSub);
+                
+                boolean match = true;
+                for (int j = 0; j < k; j++) {
+                    if (sortedSub[j] != sortedNums[i + j]) {
+                        match = false;
+                        break;
+                    }
+                }
+                
+                if (!match) {
+                    isValidK = false;
+                    break;
+                }
+                
+                int drops = 0;
+                for (int j = 0; j < k; j++) {
+                    if (sub[j] > sub[(j + 1) % k]) {
+                        drops++;
+                    }
+                }
+                
+                if (drops > 1) {
+                    isValidK = false;
+                    break;
+                }
+            }
+            
+            if (isValidK) {
+                totalSum += k;
+            }
+        }
+        
+        return totalSum;
+    }
+}
