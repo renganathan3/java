@@ -1,0 +1,28 @@
+import java.util.concurrent.Semaphore;
+
+class H2O {
+    private final Semaphore hSem = new Semaphore(2);
+    private final Semaphore oSem = new Semaphore(0);
+
+    public H2O() {
+        
+    }
+
+    public void hydrogen(Runnable releaseHydrogen) throws InterruptedException {
+        hSem.acquire(); 
+		
+        releaseHydrogen.run();
+
+        if (hSem.availablePermits() == 0) {
+            oSem.release();
+        }
+    }
+
+    public void oxygen(Runnable releaseOxygen) throws InterruptedException {
+        oSem.acquire(); 
+        
+		releaseOxygen.run();
+
+        hSem.release(2);
+    }
+}
