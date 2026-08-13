@@ -1,0 +1,30 @@
+class Solution {
+    public int nthSuperUglyNumber(int n, int[] primes) {
+        int len = primes.length;
+        int[] dp = new int[n];
+        dp[0] = 1; 
+        
+        int[] pointers = new int[len];
+        
+        for (int i = 1; i < n; i++) {
+            long minNext = Long.MAX_VALUE;
+            
+            for (int j = 0; j < len; j++) {
+                long currentProduct = (long) dp[pointers[j]] * primes[j];
+                if (currentProduct < minNext) {
+                    minNext = currentProduct;
+                }
+            }
+            
+            dp[i] = (int) minNext;
+            
+            for (int j = 0; j < len; j++) {
+                if ((long) dp[pointers[j]] * primes[j] == minNext) {
+                    pointers[j]++;
+                }
+            }
+        }
+        
+        return dp[n - 1];
+    }
+}
